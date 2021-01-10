@@ -1,7 +1,10 @@
 .Card {
 	position: absolute;
 	z-index: 100;
-	left: 0;
-	right: 0;
-	margin: auto;
+	width: 100vw;
+	margin: 0 auto;
 }
+
+/* .Card-img {
+	position: absolute;
+} */
