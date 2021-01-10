@@ -27,7 +27,6 @@ const Deck = () => {
 			const { deck_id } = deck;
 			try {
 				const resp = await axios.get(`${BASE_URL}/${deck_id}/draw/`);
-				console.log(resp.data.remaining);
 				if (resp.data.remaining === 0) {
 					setAutoDraw(false);
 					setGameOver(true);
@@ -67,7 +66,10 @@ const Deck = () => {
 		setTimesRestarted((r) => r + 1);
 		if (gameOver) {
 			setGameOver(false);
+		} else if (autoDraw) {
+			setAutoDraw(false);
 		}
+		setStarted(false);
 	};
 
 	const cards = drawn.map((card) => {
