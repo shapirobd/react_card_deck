@@ -19,7 +19,6 @@ const Card = ({ name, image }) => {
 		posOrNegTop,
 		posOrNegLeft,
 	});
-	console.log(cardRef.current);
 	return (
 		<div
 			className="Card"

@@ -9,6 +9,9 @@ const Deck = () => {
 	const [autoDraw, setAutoDraw] = useState(false);
 	const [deck, setDeck] = useState(null);
 	const [drawn, setDrawn] = useState([]);
+	const [started, setStarted] = useState(false);
+	const [timesRestarted, setTimesRestarted] = useState(0);
+	const [gameOver, setGameOver] = useState(false);
 	const timerRef = useRef(null);
 
 	useEffect(() => {
@@ -17,15 +20,17 @@ const Deck = () => {
 			setDeck(resp.data);
 		}
 		getCards();
-	}, [setDeck]);
+	}, [setDeck, timesRestarted]);
 
 	useEffect(() => {
 		async function draw() {
 			const { deck_id } = deck;
 			try {
 				const resp = await axios.get(`${BASE_URL}/${deck_id}/draw/`);
+				console.log(resp.data.remaining);
 				if (resp.data.remaining === 0) {
 					setAutoDraw(false);
+					setGameOver(true);
 					throw new Error("no cards remaining!");
 				}
 				const card = resp.data.cards[0];
@@ -43,8 +48,9 @@ const Deck = () => {
 		}
 		if (autoDraw && !timerRef.current) {
 			timerRef.current = setInterval(async () => {
+				setStarted(true);
 				await draw();
-			}, 1000);
+			}, 500);
 		}
 		return () => {
 			clearInterval(timerRef.current);
@@ -56,15 +62,30 @@ const Deck = () => {
 		setAutoDraw((auto) => !auto);
 	};
 
+	const restartGame = () => {
+		setDrawn([]);
+		setTimesRestarted((r) => r + 1);
+		if (gameOver) {
+			setGameOver(false);
+		}
+	};
+
 	const cards = drawn.map((card) => {
 		return <Card key={card.id} name={card.name} image={card.image} />;
 	});
 
 	return (
 		<div className="Deck">
-			<button className="Deck-btn" onClick={toggleAutoDraw}>
-				{autoDraw ? "Stop" : "Start"} Drawing
-			</button>
+			{!gameOver && (
+				<button className="Deck-btn" onClick={toggleAutoDraw}>
+					{autoDraw ? "Stop" : "Start"} Drawing
+				</button>
+			)}
+			{started && (
+				<button className="Deck-btn" onClick={restartGame}>
+					Restart
+				</button>
+			)}
 			<div className="Deck-cards">{cards}</div>
 		</div>
 	);
