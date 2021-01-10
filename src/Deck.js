@@ -50,7 +50,7 @@ const Deck = () => {
 			timerRef.current = setInterval(async () => {
 				setStarted(true);
 				await draw();
-			}, 500);
+			}, 1000);
 		}
 		return () => {
 			clearInterval(timerRef.current);
